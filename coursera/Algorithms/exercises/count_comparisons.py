@@ -30,7 +30,6 @@ def partition_first_as_pivot(elements, start, end):
 def partition_end_as_pivot(elements, start, end):
     elements[start], elements[end - 1] = elements[end - 1], elements[start]
     return partition_first_as_pivot(elements, start, end)
-
     
 def partition_end_as_pivot2(elements, start, end):
     pivot_index = end - 1
