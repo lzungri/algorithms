@@ -10,7 +10,6 @@
 # [3,1,5,2,i9,7,j8]
 # [3,1,2,5,i9,7,8]
 
-
 def partition_first_as_pivot(elements, start, end):
     pivot_index = start
     pivot_value = elements[pivot_index]
