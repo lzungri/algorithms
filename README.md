@@ -1,4 +1,4 @@
 little-programs
 ================
 
-Small programs in C, Python and Java
+Small programs in C, Python and Java.
