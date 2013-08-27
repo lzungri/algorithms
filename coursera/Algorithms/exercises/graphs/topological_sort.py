@@ -4,15 +4,16 @@ from common import create_graph
 def topological_sort(graph):
     values = {}
     already_visited = []
-    current_value = [len(graph)]
     
     def dfs(start_node):
         if start_node not in already_visited:
             already_visited.append(start_node)
             for child_node in graph[start_node]:
                 dfs(child_node)
-            values[current_value[0]] = start_node
-            current_value[0] -= 1
+            values[dfs.current_value] = start_node
+            dfs.current_value -= 1
+    
+    dfs.current_value = len(graph)
             
     for node in graph.keys():
         if node not in already_visited:
