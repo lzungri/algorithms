@@ -1,4 +1,4 @@
 .metadata/
 *.pyc
-.coursera/Algorithms/sorting-java/bin/
-.coursera/Algorithms/sorting-java/.settings/
+bin/
+.settings/
