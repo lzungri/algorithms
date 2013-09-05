@@ -68,16 +68,9 @@ class TopologicalSort(unittest.TestCase):
         
         self.assertIn(topological_sort(graph), [[0, 1, 2, 3], [0, 2, 3, 1]])
 
-
     def test_sort7(self):
         nodes = [0,1]
         edges = [(0,1), (1,0)]
         graph = create_graph(nodes, edges)
         
         self.assertIn(topological_sort(graph), [[1,0], [0,1]])
-
-        
-if __name__ == '__main__':
-    unittest.main()
-
-
