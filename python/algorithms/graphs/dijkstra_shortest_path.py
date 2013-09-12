@@ -9,10 +9,13 @@ def dijkstra_shortest_path(graph, source, dest):
 
     while graph.nodes - visited_nodes:
         min_edge = None
+        min_distance = None 
         for edge in graph.edges(visited_nodes, graph.nodes - visited_nodes):
-            source_node, dest_node, dist = edge
-            if min_edge is None or min_edge[2] > dist:
+            source_node, dest_node, edge_dist = edge
+            total_distance_to_node = distance[source_node] + edge_dist
+            if min_edge is None or min_distance > total_distance_to_node:
                 min_edge = edge
+                min_distance = total_distance_to_node
         
         if not min_edge:
             return (None, None)

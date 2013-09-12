@@ -47,6 +47,7 @@ def partition_end_as_pivot2(elements, start, end):
     return current_pivot_index
 
 
+
 def inplace_sort(elements, start=None, end=None):
     start = 0 if start is None else start
     end = len(elements) if end is None else end
