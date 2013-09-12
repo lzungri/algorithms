@@ -22,6 +22,8 @@ def inplace_sort(elements):
                 elements[j], elements[j+1] = next_j_value, j_value
     return elements
 
+# TODO: Create a test case
+
 print inplace_sort([3,1,5,9,2,7,8])
 print inplace_sort([3,1,5,4,7,9,8])
 print inplace_sort([3,1])

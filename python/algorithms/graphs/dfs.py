@@ -16,6 +16,8 @@ def dfs(graph, start_node, value, already_visited=None):
     return None
 
 
+# TODO: Create a test case
+
 nodes = [0,1,2,3,4,5,6]
 edges = [(0,1), (1,2), (0,2), (3,4), (3,2), (2,3), (2,1), (4,6), (6,5)]
 graph = create_graph(nodes, edges)

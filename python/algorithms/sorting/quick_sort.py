@@ -84,6 +84,8 @@ def compare(orig, expected):
         print "\tsorted: %s" % (sorted_list)
         print "\texpecd: %s" % (expected)
 
+# TODO: Create a test case
+
 compare([3,1,5,9,2,7,8,0], [0,1,2,3,5,7,8,9])
 compare([3,1,5,4,7,9,8,0], [0,1,3,4,5,7,8,9])
 compare([3,1,5,4,7,9,8,1,0], [0,1,1,3,4,5,7,8,9])
@@ -96,5 +98,3 @@ compare([1,1,1,3,0], [0,1,1,1,3])
 compare([0,3,1,1,5,4,1,7,9,8], [0,1,1,1,3,4,5,7,8,9])
 compare([3,3,5,9,8,1,1], [1,1,3,3,5,8,9])
 compare([1,0,3,4,2,7], [0,1,2,3,4,7])
-
-print "END"
