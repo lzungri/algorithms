@@ -23,31 +23,52 @@ class LinkedList():
     def __init__(self):
         self.__first = None
         self.__last = None
+        self.__size = 0
     
     def extend(self, values):
         map(self.add, values)
     
     def add(self, value):
-        if not self.__first:
-            self.__first = self.__last = ListNode(value)
-            return
-        
-        for node in self.__iter_nodes():
-            if node.value > value:
-                if node is self.__first:
-                    self.__first = ListNode(value, next_node=self.__first)
-                    node.previous = self.__first
-                else:
-                    new_node = ListNode(value, prev_node=node.previous, next_node=node)
-                    node.previous.next = new_node
-                    node.previous = new_node
+        def _add():
+            if self.is_empty():
+                self.__first = self.__last = ListNode(value)
                 return
+            
+            for node in self.__iter_nodes():
+                if node.value > value:
+                    if node is self.__first:
+                        self.__first = ListNode(value, next_node=self.__first)
+                        node.previous = self.__first
+                    else:
+                        new_node = ListNode(value, prev_node=node.previous, next_node=node)
+                        node.previous.next = new_node
+                        node.previous = new_node
+                    return
+            
+            self.__last = ListNode(value, prev_node=self.__last)
+            node.next = self.__last
         
-        self.__last = ListNode(value, prev_node=self.__last)
-        node.next = self.__last
+        _add()
+        self.__size += 1
+        return
+    
+    def get(self, index):
+        if index < 0 or index >= len(self):
+            raise IndexError()
+
+        forward = index < len(self) >> 1
+        if not forward:
+            index = len(self) - index - 1
+        node = self.__first if forward else self.__last
+        
+        for _ in range(index):
+            node = getattr(node, "next" if forward else "previous")
+        
+        return node.value
                 
     def delete(self, value):
         self.__delete_node(self.__search_node_with(value))
+        self.__size -= 1
     
     def __delete_node(self, node):
         if not node:
@@ -79,8 +100,11 @@ class LinkedList():
     def contains(self, value):
         return self.__search_node_with(value) is not None
     
+    def is_empty(self):
+        return len(self) <= 0
+    
     def __len__(self):
-        return len(list([n for n in self]))
+        return self.__size
     
     def __iter_nodes(self):
         node = self.__first
@@ -120,12 +144,12 @@ class LinkedListTestCase(TestCase):
         self.__assert_order([1], [1])
 
     def test5(self):
-        self.__assert_order(range(100000)[::-1], range(100000))
+        self.__assert_order(range(10000)[::-1], range(10000))
   
-    def test6(self):
-        rand_elements = range(5000)
+    def test_add_10000_random(self):
+        rand_elements = range(10000)
         rand_elements = [rand_elements.pop(random.randrange(0, len(rand_elements))) for _ in range(len(rand_elements))]
-        self.__assert_order(rand_elements, range(5000))
+        self.__assert_order(rand_elements, range(10000))
 
     def test7(self):
         self.__assert_order([0,1,-1,-3,-5,9,-2], [-5,-3,-2,-1,0,1,9])
@@ -197,3 +221,16 @@ class LinkedListTestCase(TestCase):
   
     def test15(self):
         self.__assert_order(range(1000), range(1000))
+
+    def test16(self):
+        ll = LinkedList()
+        ll.extend([5,5,0,3,5,8,6,10])
+        self.assertEquals(ll.get(1), 3)
+        self.assertEquals(ll.get(2), 5)
+        self.assertRaises(IndexError, ll.get, 8)
+
+    def test_get_from_10000(self):
+        ll = LinkedList()
+        ll.extend(range(10000))
+        self.assertEquals(ll.get(1), 1)
+        self.assertEquals(ll.get(9998), 9998)
