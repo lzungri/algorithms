@@ -41,7 +41,7 @@ class ArrayList():
         if index < 0 or index > len(self):
             raise IndexError()
     
-    def get(self, index):
+    def __getitem__(self, index):
         self.__check_index(index)
         return self.__array[index]
     
@@ -184,12 +184,12 @@ class ArrayListTestCase(TestCase):
     def test16(self):
         al = ArrayList()
         al.extend([5,5,0,3,5,8,6,10])
-        self.assertEquals(al.get(1), 3)
-        self.assertEquals(al.get(2), 5)
-        self.assertRaises(IndexError, al.get, 8)
+        self.assertEquals(al[1], 3)
+        self.assertEquals(al[2], 5)
+        self.assertRaises(IndexError, al.__getitem__, 8)
 
     def test_get_from_10000(self):
         al = ArrayList()
         al.extend(range(10000))
-        self.assertEquals(al.get(1), 1)
-        self.assertEquals(al.get(9999), 9999)
+        self.assertEquals(al[1], 1)
+        self.assertEquals(al[9999], 9999)

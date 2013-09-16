@@ -52,7 +52,7 @@ class LinkedList():
         self.__size += 1
         return
     
-    def get(self, index):
+    def __getitem__(self, index):
         if index < 0 or index >= len(self):
             raise IndexError()
 
@@ -225,12 +225,12 @@ class LinkedListTestCase(TestCase):
     def test16(self):
         ll = LinkedList()
         ll.extend([5,5,0,3,5,8,6,10])
-        self.assertEquals(ll.get(1), 3)
-        self.assertEquals(ll.get(2), 5)
-        self.assertRaises(IndexError, ll.get, 8)
+        self.assertEquals(ll[1], 3)
+        self.assertEquals(ll[2], 5)
+        self.assertRaises(IndexError, ll.__getitem__, 8)
 
     def test_get_from_10000(self):
         ll = LinkedList()
         ll.extend(range(10000))
-        self.assertEquals(ll.get(1), 1)
-        self.assertEquals(ll.get(9998), 9998)
+        self.assertEquals(ll[1], 1)
+        self.assertEquals(ll[9998], 9998)
