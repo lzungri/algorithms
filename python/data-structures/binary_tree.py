@@ -134,7 +134,7 @@ class BinaryTree():
             return self.__min(node.right).value
         return None
     
-    def contains(self, value):
+    def __contains__(self, value):
         return self.__search_node_with(value, self.__root) is not None
     
     def __len__(self):
@@ -208,71 +208,71 @@ class BinaryTreeTestCase(TestCase):
     def test9(self):
         tree = BinaryTree()
         tree.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(tree.contains(10))
+        self.assertTrue(10 in tree)
         self.assertEquals(tree.max(), 10)
 
     def test10(self):
         tree = BinaryTree()
         tree.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(tree.contains(0))
+        self.assertTrue(0 in tree)
         self.assertEquals(tree.min(), 0)
 
     def test11(self):
         tree = BinaryTree()
         tree.extend([5,5,0,3,5,8,6,10])
         print tree
-        self.assertTrue(tree.contains(5))
+        self.assertTrue(5 in tree)
         self.assertEquals(tree.predecessor(5), 5)
-        self.assertTrue(tree.contains(6))
+        self.assertTrue(6 in tree)
         self.assertEquals(tree.predecessor(8), 6)
-        self.assertTrue(tree.contains(0))
+        self.assertTrue(0 in tree)
         self.assertEquals(tree.predecessor(0), None)
 
     def test12(self):
         tree = BinaryTree()
         tree.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(tree.contains(3))
-        self.assertTrue(tree.contains(5))
+        self.assertTrue(3 in tree)
+        self.assertTrue(5 in tree)
         self.assertEquals(tree.sucessor(3), 5)
-        self.assertTrue(tree.contains(8))
+        self.assertTrue(8 in tree)
         self.assertEquals(tree.sucessor(8), 10)
-        self.assertTrue(tree.contains(10))
+        self.assertTrue(10 in tree)
         self.assertEquals(tree.sucessor(10), None)
 
     def test13(self):
         tree = BinaryTree()
         tree.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(tree.contains(3))
+        self.assertTrue(3 in tree)
         tree.delete(3)
-        self.assertFalse(tree.contains(3))
+        self.assertFalse(3 in tree)
         self.assertEquals([item for item in tree], [0,5,5,5,6,8,10])
         
-        self.assertTrue(tree.contains(5))
+        self.assertTrue(5 in tree)
         tree.delete(5)
-        self.assertTrue(tree.contains(5))
+        self.assertTrue(5 in tree)
         tree.delete(5)
         tree.delete(5)
-        self.assertFalse(tree.contains(5))
+        self.assertFalse(5 in tree)
         self.assertEquals([item for item in tree], [0,6,8,10])
 
-        self.assertTrue(tree.contains(0))
+        self.assertTrue(0 in tree)
         tree.delete(0)
-        self.assertFalse(tree.contains(0))
+        self.assertFalse(0 in tree)
         self.assertEquals([item for item in tree], [6,8,10])
 
-        self.assertTrue(tree.contains(8))
+        self.assertTrue(8 in tree)
         tree.delete(8)
-        self.assertFalse(tree.contains(8))
+        self.assertFalse(8 in tree)
         self.assertEquals([item for item in tree], [6,10])
 
-        self.assertTrue(tree.contains(6))
+        self.assertTrue(6 in tree)
         tree.delete(6)
-        self.assertFalse(tree.contains(6))
+        self.assertFalse(6 in tree)
         self.assertEquals([item for item in tree], [10])
 
-        self.assertTrue(tree.contains(10))
+        self.assertTrue(10 in tree)
         tree.delete(10)
-        self.assertFalse(tree.contains(10))
+        self.assertFalse(10 in tree)
         self.assertEquals([item for item in tree], [])
         
         self.assertEquals(len(tree), 0)
@@ -281,9 +281,9 @@ class BinaryTreeTestCase(TestCase):
         tree = BinaryTree()
         tree.add(1)
         self.assertEquals(len(tree), 1)
-        self.assertTrue(tree.contains(1))
+        self.assertTrue(1 in tree)
         tree.delete(1)
-        self.assertFalse(tree.contains(1))
+        self.assertFalse(1 in tree)
 
         tree.add(2)
         tree.add(3)

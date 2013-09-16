@@ -34,7 +34,7 @@ class ArrayList():
     def max(self):
         return self.__array and self.__array[-1]
             
-    def contains(self, value):
+    def __contains__(self, value):
         return self.__get_index_of(value) >= 0
     
     def __check_index(self, index):
@@ -119,49 +119,49 @@ class ArrayListTestCase(TestCase):
     def test9(self):
         al = ArrayList()
         al.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(al.contains(10))
+        self.assertTrue(10 in al)
         self.assertEquals(al.max(), 10)
 
     def test10(self):
         al = ArrayList()
         al.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(al.contains(0))
+        self.assertTrue(0 in al)
         self.assertEquals(al.min(), 0)
 
     def test13(self):
         al = ArrayList()
         al.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(al.contains(3))
+        self.assertTrue(3 in al)
         al.delete(3)
-        self.assertFalse(al.contains(3))
+        self.assertFalse(3 in al)
         self.assertEquals([item for item in al], [0,5,5,5,6,8,10])
         
-        self.assertTrue(al.contains(5))
+        self.assertTrue(5 in al)
         al.delete(5)
-        self.assertTrue(al.contains(5))
+        self.assertTrue(5 in al)
         al.delete(5)
         al.delete(5)
-        self.assertFalse(al.contains(5))
+        self.assertFalse(5 in al)
         self.assertEquals([item for item in al], [0,6,8,10])
 
-        self.assertTrue(al.contains(0))
+        self.assertTrue(0 in al)
         al.delete(0)
-        self.assertFalse(al.contains(0))
+        self.assertFalse(0 in al)
         self.assertEquals([item for item in al], [6,8,10])
 
-        self.assertTrue(al.contains(8))
+        self.assertTrue(8 in al)
         al.delete(8)
-        self.assertFalse(al.contains(8))
+        self.assertFalse(8 in al)
         self.assertEquals([item for item in al], [6,10])
 
-        self.assertTrue(al.contains(6))
+        self.assertTrue(6 in al)
         al.delete(6)
-        self.assertFalse(al.contains(6))
+        self.assertFalse(6 in al)
         self.assertEquals([item for item in al], [10])
 
-        self.assertTrue(al.contains(10))
+        self.assertTrue(10 in al)
         al.delete(10)
-        self.assertFalse(al.contains(10))
+        self.assertFalse(10 in al)
         self.assertEquals([item for item in al], [])
         
         self.assertEquals(len(al), 0)
@@ -170,9 +170,9 @@ class ArrayListTestCase(TestCase):
         al = ArrayList()
         al.add(1)
         self.assertEquals(len(al), 1)
-        self.assertTrue(al.contains(1))
+        self.assertTrue(1 in al)
         al.delete(1)
-        self.assertFalse(al.contains(1))
+        self.assertFalse(1 in al)
 
         al.add(2)
         al.add(3)

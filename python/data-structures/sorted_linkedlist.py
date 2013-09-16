@@ -97,7 +97,7 @@ class LinkedList():
     def max(self):
         return self.__last and self.__last.value
             
-    def contains(self, value):
+    def __contains__(self, value):
         return self.__search_node_with(value) is not None
     
     def is_empty(self):
@@ -160,49 +160,49 @@ class LinkedListTestCase(TestCase):
     def test9(self):
         ll = LinkedList()
         ll.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(ll.contains(10))
+        self.assertTrue(10 in ll)
         self.assertEquals(ll.max(), 10)
 
     def test10(self):
         ll = LinkedList()
         ll.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(ll.contains(0))
+        self.assertTrue(0 in ll)
         self.assertEquals(ll.min(), 0)
 
     def test13(self):
         ll = LinkedList()
         ll.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(ll.contains(3))
+        self.assertTrue(3 in ll)
         ll.delete(3)
-        self.assertFalse(ll.contains(3))
+        self.assertFalse(3 in ll)
         self.assertEquals([item for item in ll], [0,5,5,5,6,8,10])
         
-        self.assertTrue(ll.contains(5))
+        self.assertTrue(5 in ll)
         ll.delete(5)
-        self.assertTrue(ll.contains(5))
+        self.assertTrue(5 in ll)
         ll.delete(5)
         ll.delete(5)
-        self.assertFalse(ll.contains(5))
+        self.assertFalse(5 in ll)
         self.assertEquals([item for item in ll], [0,6,8,10])
 
-        self.assertTrue(ll.contains(0))
+        self.assertTrue(0 in ll)
         ll.delete(0)
-        self.assertFalse(ll.contains(0))
+        self.assertFalse(0 in ll)
         self.assertEquals([item for item in ll], [6,8,10])
 
-        self.assertTrue(ll.contains(8))
+        self.assertTrue(8 in ll)
         ll.delete(8)
-        self.assertFalse(ll.contains(8))
+        self.assertFalse(8 in ll)
         self.assertEquals([item for item in ll], [6,10])
 
-        self.assertTrue(ll.contains(6))
+        self.assertTrue(6 in ll)
         ll.delete(6)
-        self.assertFalse(ll.contains(6))
+        self.assertFalse(6 in ll)
         self.assertEquals([item for item in ll], [10])
 
-        self.assertTrue(ll.contains(10))
+        self.assertTrue(10 in ll)
         ll.delete(10)
-        self.assertFalse(ll.contains(10))
+        self.assertFalse(10 in ll)
         self.assertEquals([item for item in ll], [])
         
         self.assertEquals(len(ll), 0)
@@ -211,9 +211,9 @@ class LinkedListTestCase(TestCase):
         ll = LinkedList()
         ll.add(1)
         self.assertEquals(len(ll), 1)
-        self.assertTrue(ll.contains(1))
+        self.assertTrue(1 in ll)
         ll.delete(1)
-        self.assertFalse(ll.contains(1))
+        self.assertFalse(1 in ll)
 
         ll.add(2)
         ll.add(3)
