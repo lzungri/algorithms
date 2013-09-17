@@ -5,9 +5,13 @@ from unittest import TestCase
 class BitSet():
 
     def __init__(self, initial_values=None):
-        self.__bitarray = array.array("H", [])
+        self.__bitarray = array.array("I", [])
         if initial_values is not None:
             self.set_indexes(initial_values)
+    
+    @property
+    def itemsize(self):
+        return self.__bitarray.itemsize
     
     def set_indexes(self, indexes):
         map(self.set, indexes)
@@ -47,6 +51,9 @@ class BitSet():
         return value & (1 << bit_index)
     
     def __contains__(self, index):
+        array_index, _ = self.__get_array_index_and_bit_offset_of(index)
+        if array_index >= len(self.__bitarray):
+            return False
         return self.get(index) > 0
     
     def __iter__(self):
@@ -64,6 +71,10 @@ class BitSet():
                     yield word_index * bits_per_word + bit_index
 
     def __getitem__(self, index):
+        if isinstance(index, slice):
+            indexes = range(*index.indices(len(self)))
+            bits_set = (pos for pos, i in enumerate(indexes) if i in self)
+            return BitSet(initial_values=bits_set)
         return self.get(index)
 
     def __setitem__(self, index, value):
@@ -74,6 +85,9 @@ class BitSet():
 
     def __delitem__(self, index):
         self.clear(index)
+    
+    def __len__(self):
+        return len(self.__bitarray) * self.__bitarray.itemsize << 3
     
     def __repr__(self):
         return "BitSet([%s])" % ", ".join(str(index) for index in self)
@@ -143,6 +157,7 @@ class BitSetTestCase(TestCase):
     def test16(self):
         bs = BitSet()
         bs[100] = True
+        bs[200] = "Hello"
         self.assertIn(100, bs)
         bs[100] = False
         self.assertNotIn(100, bs)
@@ -155,3 +170,33 @@ class BitSetTestCase(TestCase):
         self.assertIn(5, bs)
         self.assertIn(6, bs)
         self.assertIn(7, bs)
+
+    def test_slice(self):
+        #11100111
+        bs = BitSet([0,1,2,5,6,7])
+        #110011
+        bs2 = bs[1:7]
+        self.assertIn(0, bs2)
+        self.assertIn(1, bs2)
+        self.assertNotIn(2, bs2)
+        self.assertNotIn(3, bs2)
+        self.assertIn(4, bs2)
+        self.assertIn(5, bs2)
+        self.assertIn(4, bs2)
+
+    def test_slice2(self):
+        #101011
+        bs = BitSet([0,2,4,5])
+        #111
+        bs2 = bs[::2]
+        self.assertIn(0, bs2)
+        self.assertIn(1, bs2)
+        self.assertIn(2, bs2)
+        self.assertNotIn(3, bs2)
+        self.assertNotIn(4, bs2)
+
+        #001
+        bs3 = bs[1::2]
+        self.assertNotIn(0, bs3)
+        self.assertNotIn(1, bs3)
+        self.assertIn(2, bs3)

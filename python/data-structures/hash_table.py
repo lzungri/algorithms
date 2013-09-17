@@ -158,7 +158,7 @@ class ArrayListTestCase(TestCase):
     def test5(self):
         self.__assert_contains(range(5000)[::-1])
    
-    def test_add_10000_random(self):
+    def test_add_5000_random(self):
         rand_elements = range(5000)
         rand_elements = [rand_elements.pop(random.randrange(0, len(rand_elements))) for _ in range(len(rand_elements))]
         self.__assert_contains(rand_elements)
