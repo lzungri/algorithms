@@ -86,6 +86,18 @@ class BitSet():
     def __delitem__(self, index):
         self.clear(index)
     
+    def __and__(self, other):
+        # TODO Optimize!
+        self_bits = set(self)
+        other_bits = set(other)
+        return BitSet(self_bits & other_bits)
+    
+    def __or__(self, other):
+        # TODO Optimize!
+        self_bits = set(self)
+        other_bits = set(other)
+        return BitSet(self_bits | other_bits)
+    
     def __len__(self):
         return len(self.__bitarray) * self.__bitarray.itemsize << 3
     
@@ -200,3 +212,31 @@ class BitSetTestCase(TestCase):
         self.assertNotIn(0, bs3)
         self.assertNotIn(1, bs3)
         self.assertIn(2, bs3)
+
+    def test_intersection(self):
+        bs = BitSet([0,2,4,5]) & BitSet([0,5,6])
+        self.assertIn(0, bs)
+        self.assertIn(5, bs)
+        self.assertNotIn(2, bs)
+        self.assertNotIn(4, bs)
+        self.assertNotIn(6, bs)
+
+    def test_intersection2(self):
+        bs = BitSet([0,2,4,5])
+        bs &= BitSet([0])
+        self.assertIn(0, bs)
+        self.assertNotIn(2, bs)
+        self.assertNotIn(4, bs)
+        self.assertNotIn(5, bs)
+
+    def test_intersection3(self):
+        bs = BitSet([0,2,4,5])
+        bs &= BitSet([1,6])
+        self.assertFalse(list(bs))
+
+    def test_union(self):
+        bs = BitSet([0,2,4,5])
+        bs |= BitSet([1,6,3])
+        for i in range(7):
+            self.assertIn(i, bs)
+        
