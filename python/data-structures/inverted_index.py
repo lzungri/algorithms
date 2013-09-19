@@ -173,6 +173,9 @@ class InvertedIndex():
             field = self.__fields[field_id]
             for token in field.tokenize(value):
                 searchers.add(TokenSearcher(field_id, token))
+        
+        if not searchers:
+            raise RuntimeError("No searchers were specified")
             
         return Query(self, ANDSearcher(*searchers))
         
@@ -314,12 +317,12 @@ class InvertedIndexTestCase(TestCase):
         results = list(index.search(query))
         self.assertEquals(len(results), 2)
 
-        searcher = TokenSearcher("data", "basic") & searcher
+        searcher &= TokenSearcher("data", "basic")
         query = index.create_query(searcher)
         results = list(index.search(query))
         self.assertEquals(len(results), 1)
 
-        searcher = TokenSearcher("data", "lala") & searcher
+        searcher &= TokenSearcher("data", "lala")
         query = index.create_query(searcher)
         results = list(index.search(query))
         self.assertEquals(len(results), 0)
