@@ -3,50 +3,49 @@ from unittest import TestCase
 
 
 class Bucket():
-    def __init__(self):
-        self.key = None
-        self.value = None
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
         self.next = None
-        self.used = False
     
     def __repr__(self):
-        return "(%r, %r) -> %s" % (self.key, self.value, self.next) if self.used else "None"
+        return "(%r, %r) -> %s" % (self.key, self.value, self.next)
 
 
 class HashTable():
 
     def __init__(self, max_buckets=50):
         self.__max_buckets = max_buckets
-        self.__buckets = [Bucket() for _ in range(self.__max_buckets)]
+        self.__buckets = [None] * self.__max_buckets
         self.__size = 0
         self.__collisions_count = 0
     
     def put(self, key, value):
-        bucket = self.__get_base_bucket_of(key)
-        if self.__set(bucket, key, value):
+        if self.__set(key, value):
             self.__size += 1
     
-    def __set(self, bucket, key, value):
-        if bucket.used:
-            self.__collisions_count += 1
+    def __set(self, key, value):
+        bucket_index = self.__get_bucket_index_of(key)
+        bucket = self.__buckets[bucket_index]
+        
+        if not bucket:
+            self.__buckets[bucket_index] = Bucket(key, value)
+            return True
+
+        self.__collisions_count += 1
 
         prev_bucket = None
         # Non recursive function to avoid stack overflows when storing big data
-        while bucket and bucket.used and bucket.key != key:
+        while bucket and bucket.key != key:
             prev_bucket = bucket
             bucket = bucket.next
 
         if not bucket:
-            bucket = Bucket()
-            prev_bucket.next = bucket
-        elif bucket.key == key:
+            prev_bucket.next = Bucket(key, value)
+        else:
             bucket.value = value
             return False
 
-        bucket.key = key
-        bucket.value = value
-        bucket.used = True
-        
         return True
     
     def get(self, key, default=None):
@@ -54,7 +53,7 @@ class HashTable():
         return self.__get(bucket, key, default)
 
     def __get(self, bucket, key, default=None):
-        while bucket and bucket.used:
+        while bucket:
             if bucket.key == key:
                 return bucket.value
             bucket = bucket.next
@@ -67,9 +66,12 @@ class HashTable():
     def __delete(self, key):
         bucket_index = self.__get_bucket_index_of(key)
         bucket = self.__buckets[bucket_index]
-
-        if bucket.used and bucket.key == key:
-            self.__buckets[bucket_index] = bucket.next or Bucket()
+        
+        if not bucket:
+            return False
+        
+        if bucket.key == key:
+            self.__buckets[bucket_index] = bucket.next
             return True
 
         prev_bucket = bucket
@@ -95,7 +97,7 @@ class HashTable():
         return self.__bucket_contains(bucket, key)
 
     def __bucket_contains(self, bucket, key):
-        while bucket and bucket.used:
+        while bucket:
             if bucket.key == key:
                 return True
             bucket = bucket.next
@@ -120,7 +122,7 @@ class HashTable():
     
     def iteritems(self):
         for bucket in self.__buckets:
-            while bucket and bucket.used:
+            while bucket:
                 yield bucket.key, bucket.value
                 bucket = bucket.next
     
