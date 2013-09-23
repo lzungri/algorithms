@@ -1,131 +1,40 @@
 import random
 from unittest import TestCase
-
-def first_true(sequence, func):
-    for item in sequence:
-        if func(item):
-            return item
-    return None
+from linkedlist import DoubleLinkedList
 
 
-class ListNode():
-    def __init__(self, value, prev_node=None, next_node=None):
-        self.value = value
-        self.previous = prev_node
-        self.next = next_node
-    
-    def __repr__(self):
-        return "%s" % self.value
-
-
-class LinkedList():
-
-    def __init__(self):
-        self.__first = None
-        self.__last = None
-        self.__size = 0
-    
-    def extend(self, values):
-        map(self.add, values)
+class SortedLinkedList(DoubleLinkedList):
     
     def add(self, value):
-        def _add():
-            if self.is_empty():
-                self.__first = self.__last = ListNode(value)
-                return
-            
-            for node in self.__iter_nodes():
-                if node.value > value:
-                    if node is self.__first:
-                        self.__first = ListNode(value, next_node=self.__first)
-                        node.previous = self.__first
-                    else:
-                        new_node = ListNode(value, prev_node=node.previous, next_node=node)
-                        node.previous.next = new_node
-                        node.previous = new_node
-                    return
-            
-            self.__last = ListNode(value, prev_node=self.__last)
-            node.next = self.__last
-        
-        _add()
-        self.__size += 1
-        return
+        def greater_value_node(index, node):
+            return node.value > value
+        return DoubleLinkedList.add(self, value, where=greater_value_node)
     
-    def __getitem__(self, index):
-        if index < 0 or index >= len(self):
-            raise IndexError()
-
-        forward = index < len(self) >> 1
-        if not forward:
-            index = len(self) - index - 1
-        node = self.__first if forward else self.__last
-        
-        for _ in range(index):
-            node = getattr(node, "next" if forward else "previous")
-        
-        return node.value
-                
-    def delete(self, value):
-        self.__delete_node(self.__search_node_with(value))
-        self.__size -= 1
-    
-    def __delete_node(self, node):
-        if not node:
-            return
-        
-        if len(self) == 1:
-            self.__first = self.__last = None
-            return
-
-        if node is self.__first:
-            self.__first = node.next
-            node.next.previous = None
-            return
-        
-        if node is self.__last:
-            self.__last = node.previous
-            node.previous.next = None
-            return
-
-        node.next.previous = node.previous
-        node.previous.next = node.next
-
     def min(self):
-        return self.__first and self.__first.value
+        return self._first and self._first.value
     
     def max(self):
-        return self.__last and self.__last.value
+        return self._last and self._last.value
+    
+    def add_in(self, index, value):
+        raise RuntimeError("Use add() to insert values")
+    
+    def __setitem__(self, index, value):
+        raise RuntimeError("Cannot update values. Use delete() and then add().")
             
-    def __contains__(self, value):
-        return self.__search_node_with(value) is not None
-    
-    def is_empty(self):
-        return len(self) <= 0
-    
-    def __len__(self):
-        return self.__size
-    
-    def __iter_nodes(self):
-        node = self.__first
-        while node:
-            yield node
-            node = node.next
 
-    def __iter__(self):
-        return (node.value for node in self.__iter_nodes())
-    
-    def __search_node_with(self, value):
-        return first_true(self.__iter_nodes(), lambda n: n.value == value)
-    
-    def __repr__(self):
-        return "LinkedList: %s" % " -> ".join((str(n) for n in self))
+class SortedLinkedListTestCase(TestCase):
 
-
-class LinkedListTestCase(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.BIG_LIST = SortedLinkedList()
+        cls.MAX_ELEMENTS = 10000
+        elements = range(cls.MAX_ELEMENTS)
+        random.shuffle(elements)
+        cls.BIG_LIST.extend(elements)
     
     def __assert_order(self, elements, expected_order):
-        ll = LinkedList()
+        ll = SortedLinkedList()
         ll.extend(elements)
         print ll
         self.assertEquals(len(ll), len(elements))
@@ -147,9 +56,9 @@ class LinkedListTestCase(TestCase):
         self.__assert_order(range(10000)[::-1], range(10000))
   
     def test_add_10000_random(self):
-        rand_elements = range(10000)
-        rand_elements = [rand_elements.pop(random.randrange(0, len(rand_elements))) for _ in range(len(rand_elements))]
-        self.__assert_order(rand_elements, range(10000))
+        elements = range(10000)
+        random.shuffle(elements)
+        self.__assert_order(elements, range(10000))
 
     def test7(self):
         self.__assert_order([0,1,-1,-3,-5,9,-2], [-5,-3,-2,-1,0,1,9])
@@ -157,20 +66,14 @@ class LinkedListTestCase(TestCase):
     def test8(self):
         self.__assert_order([6, 5, 1, 9, 2, 4, 3, 8, 7, 0], range(10))
 
-    def test9(self):
-        ll = LinkedList()
-        ll.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(10 in ll)
-        self.assertEquals(ll.max(), 10)
+    def test_max(self):
+        self.assertEquals(self.BIG_LIST.max(), self.MAX_ELEMENTS - 1)
 
-    def test10(self):
-        ll = LinkedList()
-        ll.extend([5,5,0,3,5,8,6,10])
-        self.assertTrue(0 in ll)
-        self.assertEquals(ll.min(), 0)
+    def test_min(self):
+        self.assertEquals(self.BIG_LIST.min(), 0)
 
     def test13(self):
-        ll = LinkedList()
+        ll = SortedLinkedList()
         ll.extend([5,5,0,3,5,8,6,10])
         self.assertTrue(3 in ll)
         ll.delete(3)
@@ -208,7 +111,7 @@ class LinkedListTestCase(TestCase):
         self.assertEquals(len(ll), 0)
 
     def test14(self):
-        ll = LinkedList()
+        ll = SortedLinkedList()
         ll.add(1)
         self.assertEquals(len(ll), 1)
         self.assertTrue(1 in ll)
@@ -223,14 +126,14 @@ class LinkedListTestCase(TestCase):
         self.__assert_order(range(1000), range(1000))
 
     def test16(self):
-        ll = LinkedList()
+        ll = SortedLinkedList()
         ll.extend([5,5,0,3,5,8,6,10])
         self.assertEquals(ll[1], 3)
         self.assertEquals(ll[2], 5)
         self.assertRaises(IndexError, ll.__getitem__, 8)
 
-    def test_get_from_10000(self):
-        ll = LinkedList()
-        ll.extend(range(10000))
+    def test_get_from_1000(self):
+        ll = SortedLinkedList()
+        ll.extend(range(1000))
         self.assertEquals(ll[1], 1)
-        self.assertEquals(ll[9998], 9998)
+        self.assertEquals(ll[998], 998)
