@@ -50,9 +50,6 @@ class HashTable():
     
     def get(self, key, default=None):
         bucket = self.__get_base_bucket_of(key)
-        return self.__get(bucket, key, default)
-
-    def __get(self, bucket, key, default=None):
         while bucket:
             if bucket.key == key:
                 return bucket.value
@@ -94,9 +91,6 @@ class HashTable():
     
     def __contains__(self, key):
         bucket = self.__get_base_bucket_of(key)
-        return self.__bucket_contains(bucket, key)
-
-    def __bucket_contains(self, bucket, key):
         while bucket:
             if bucket.key == key:
                 return True
