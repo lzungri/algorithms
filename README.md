@@ -9,11 +9,11 @@ Below is a (non-exhaustive) list of the things you will find:
  
 #### Data structures ####
   - [Inverted index](https://github.com/lzungri/algorithms/blob/master/python/data-structures/inverted_index.py): Pretty basic but nice (deletion not supported).
+  - [Hash table](https://github.com/lzungri/algorithms/blob/master/python/data-structures/hash_table.py): It uses a chaining with linked list strategy
   - [Bit set / Bit array](https://github.com/lzungri/algorithms/blob/master/python/data-structures/bitset.py): Supports intersection and union operations but they need to be optimized
+  - [Bloom filter](https://github.com/lzungri/algorithms/blob/master/python/data-structures/bloom_filter.py): Very basic hash functions
   - [Heap](https://github.com/lzungri/algorithms/blob/master/python/data-structures/heap.py)
   - [Binary tree](https://github.com/lzungri/algorithms/blob/master/python/data-structures/binary_tree.py)
-  - [Bloom filter](https://github.com/lzungri/algorithms/blob/master/python/data-structures/bloom_filter.py): Very basic hash functions
-  - [Hash table](https://github.com/lzungri/algorithms/blob/master/python/data-structures/hash_table.py): It uses a chaining with linked list strategy
   - [Sorted array list](https://github.com/lzungri/algorithms/blob/master/python/data-structures/sorted_arraylist.py)
   - [Sorted linked list](https://github.com/lzungri/algorithms/blob/master/python/data-structures/sorted_linkedlist.py)
 
