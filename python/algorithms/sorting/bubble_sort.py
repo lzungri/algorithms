@@ -14,12 +14,14 @@
 # [1,2,3,5,7,8,9]
 
 def inplace_sort(elements):
-    for i in range(len(elements) - 1):
-        for j in range(len(elements) - i - 1):
-            j_value = elements[j]
-            next_j_value = elements[j+1]
-            if j_value > next_j_value:
-                elements[j], elements[j+1] = next_j_value, j_value
+    for i in reversed(range(len(elements) - 1)):
+        swapped = False
+        for j in range(i + 1):
+            if elements[j] > elements[j+1]:
+                elements[j], elements[j+1] = elements[j+1], elements[j]
+                swapped = True
+        if not swapped:
+            return elements
     return elements
 
 # TODO: Create a test case

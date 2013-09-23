@@ -5,21 +5,24 @@ from bitset import BitSet
 
 class Field():
     def __init__(self, store=False):
-        self.__store = store
+        self.store = store
+        
+    def tokenize(self, value):
+        raise NotImplementedError()
+    
+    def __repr__(self):
+        return "%s (store: %s)" % (self.__class__.__name__, self.store)
+    
+class NumericField(Field):
+    def __init__(self, store=False):
+        Field.__init__(self, store)
         
     def tokenize(self, value):
         return [value]
-    
-    @property
-    def store(self):
-        return self.__store
-    
-    def __repr__(self):
-        return "%s (store: %s)" % (self.__class__.__name__, self.__store)
 
-class IDField(Field):
+class IDField(NumericField):
     def __init__(self, store=True):
-        Field.__init__(self, store)
+        NumericField.__init__(self, store)
     
 class TextField(Field):
     def __init__(self, store=False, separator=" "):
@@ -28,10 +31,6 @@ class TextField(Field):
         
     def tokenize(self, value):
         return value.split(self.__separator)
-    
-class NumericField(Field):
-    def __init__(self, store=False):
-        Field.__init__(self, store)
 
 
 

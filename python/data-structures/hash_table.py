@@ -4,82 +4,13 @@ from unittest import TestCase
 
 class Bucket():
     def __init__(self):
+        self.key = None
         self.value = None
         self.next = None
         self.used = False
     
-    def set(self, value):
-        if self.used:
-            # Non recursive function to avoid stack overflows when storing big data
-            bucket = self
-            while bucket:
-                if bucket.next is None:
-                    bucket.next = Bucket()
-                    break
-                bucket = bucket.next
-                
-            bucket.next.set(value)
-        else:
-            self.value = value
-            self.used = True
-    
-    def delete(self, value):
-        prev_bucket = None
-        bucket = self
-        while bucket:
-            if not bucket.used:
-                return False
-            
-            if bucket.value == value:
-                last_bucket = self.__get_and_remove_last_bucket()
-                bucket.value = last_bucket.value
-                if last_bucket == bucket and prev_bucket:
-                    prev_bucket.next = None
-                return True
-            
-            prev_bucket = bucket
-            bucket = prev_bucket.next
-        return False
-    
-    def __get_and_remove_last_bucket(self):
-        prev_bucket = None
-        bucket = self
-        while bucket.next:
-            prev_bucket = bucket
-            bucket = prev_bucket.next
-        if prev_bucket:
-            prev_bucket.next = None
-        bucket.used = False
-        return bucket
-    
-    def contains(self, value):
-        if self.used:
-            bucket = self
-            while bucket:
-                if bucket.value == value:
-                    return True
-                bucket = bucket.next
-        return False
-    
-    def values(self):
-        if self.used:
-            yield self.value
-
-            bucket = self.next
-            while bucket:
-                yield bucket.value
-                bucket = bucket.next
-    
-    def __len__(self):
-        length = 0
-        bucket = self
-        while bucket is not None and bucket.used:
-            length += 1
-            bucket = bucket.next
-        return length
-    
     def __repr__(self):
-        return "Bucket(%s elements)" % len(self)
+        return "(%r, %r) -> %s" % (self.key, self.value, self.next) if self.used else "None"
 
 
 class HashTable():
@@ -90,64 +21,155 @@ class HashTable():
         self.__size = 0
         self.__collisions_count = 0
     
-    def extend(self, values):
-        map(self.add, values)
+    def put(self, key, value):
+        bucket = self.__get_base_bucket_of(key)
+        if self.__set(bucket, key, value):
+            self.__size += 1
     
-    def add(self, value):
-        bucket = self.__get_base_bucket_of(value)
+    def __set(self, bucket, key, value):
         if bucket.used:
             self.__collisions_count += 1
-        bucket.set(value)
-        self.__size += 1
+
+        prev_bucket = None
+        # Non recursive function to avoid stack overflows when storing big data
+        while bucket and bucket.used and bucket.key != key:
+            prev_bucket = bucket
+            bucket = bucket.next
+
+        if not bucket:
+            bucket = Bucket()
+            prev_bucket.next = bucket
+        elif bucket.key == key:
+            return False
+
+        bucket.key = key
+        bucket.value = value
+        bucket.used = True
+        
+        return True
+    
+    def get(self, key, default=None):
+        bucket = self.__get_base_bucket_of(key)
+        return self.__get(bucket, key, default)
+
+    def __get(self, bucket, key, default=None):
+        while bucket and bucket.used:
+            if bucket.key == key:
+                return bucket.value
+            bucket = bucket.next
+        return default
                 
-    def delete(self, value):
-        bucket = self.__get_base_bucket_of(value)
-        if bucket.delete(value):
+    def delete(self, key):
+        if self.__delete(key):
             self.__size -= 1
     
-    def __get_bucket_index_of(self, value):
-        return hash(value) % self.__max_buckets
+    def __delete(self, key):
+        bucket_index = self.__get_bucket_index_of(key)
+        bucket = self.__buckets[bucket_index]
 
-    def __get_base_bucket_of(self, value):
-        bucket_index = self.__get_bucket_index_of(value)
+        if bucket.used and bucket.key == key:
+            self.__buckets[bucket_index] = bucket.next or Bucket()
+            return True
+
+        prev_bucket = bucket
+        bucket = bucket.next
+        while bucket and bucket.key != key:
+            prev_bucket = bucket
+            bucket = bucket.next
+        if bucket:
+            prev_bucket.next = bucket.next
+            return True
+
+        return False
+    
+    def __get_bucket_index_of(self, key):
+        return hash(key) % self.__max_buckets
+
+    def __get_base_bucket_of(self, key):
+        bucket_index = self.__get_bucket_index_of(key)
         return self.__buckets[bucket_index]
     
-    def __contains__(self, value):
-        bucket = self.__get_base_bucket_of(value)
-        return bucket.contains(value)
+    def __contains__(self, key):
+        bucket = self.__get_base_bucket_of(key)
+        return self.__bucket_contains(bucket, key)
+
+    def __bucket_contains(self, bucket, key):
+        while bucket and bucket.used:
+            if bucket.key == key:
+                return True
+            bucket = bucket.next
+        return False
     
     def is_empty(self):
         return len(self) <= 0
     
+    def __getitem__(self, key):
+        if key not in self:
+            raise KeyError()
+        return self.get(key)
+    
+    def __setitem__(self, key, value):
+        self.put(key, value)
+    
+    def __delitem__(self, key):
+        self.delete(key)
+    
     def __len__(self):
         return self.__size
     
-    def __iter__(self):
+    def iteritems(self):
         for bucket in self.__buckets:
-            for value in bucket.values():
-                yield value
+            while bucket and bucket.used:
+                yield bucket.key, bucket.value
+                bucket = bucket.next
+    
+    def __iter__(self):
+        return (key for key, value in self.iteritems())
     
     def __repr__(self):
         return "HashTable (%s buckets, %s collisions):\n\t%s" % (self.__max_buckets,
                                                                self.__collisions_count,
-                                                               "\n\t".join(str(b) for b in self.__buckets))
+                                                               "\n\t".join("%s: %s" % (i, b) for i, b in enumerate(self.__buckets)))
 
 
-class ArrayListTestCase(TestCase):
+class HashTableTestCase(TestCase):
+    
+    def test0(self):
+        ht = HashTable()
+        ht.put("Hello", 1)
+        self.assertIn("Hello", ht)
+        self.assertNotIn("Bye", ht)
+        self.assertEquals(ht.get("Hello"), 1)
+        
+    def test1(self):
+        ht = HashTable()
+        ht["Hello"] = 1
+        self.assertIn("Hello", ht)
+        self.assertEquals(ht["Hello"], 1)
+        self.assertRaises(KeyError, lambda: ht["Non-existent key"])
+        
+    def test2(self):
+        python_hash = {"Hello%s" % i: i for i in range(100)}
+        
+        ht = HashTable()
+        for k, v in python_hash.iteritems():
+            ht[k] = v
+        print ht
+        
+        for k, v in python_hash.iteritems():
+            self.assertIn(k, ht)
+            self.assertEquals(ht[k], v)
+
+        self.assertEquals(set(ht.iteritems()), set(python_hash.iteritems()))
     
     def __assert_contains(self, elements, max_buckets=50):
         ht = HashTable(max_buckets)
-        ht.extend(elements)
+        for value in elements:
+            ht.put(value, value)
         print ht
         self.assertEquals(len(ht), len(elements))
         for item in elements:
             self.assertIn(item, ht)
-    
-    def test1(self):
-        self.__assert_contains([5,3,8,9,10,11,0])
-
-    def test2(self):
-        self.__assert_contains([5,5,0,3,5,8,6,10])
 
     def test3(self):
         self.__assert_contains([])
@@ -163,6 +185,9 @@ class ArrayListTestCase(TestCase):
         rand_elements = [rand_elements.pop(random.randrange(0, len(rand_elements))) for _ in range(len(rand_elements))]
         self.__assert_contains(rand_elements)
 
+    def test6(self):
+        self.__assert_contains([5,0,3,8,6,10])
+
     def test7(self):
         self.__assert_contains([0,1,-1,-3,-5,9,-2])
 
@@ -171,18 +196,16 @@ class ArrayListTestCase(TestCase):
 
     def test13(self):
         ht = HashTable()
-        ht.extend([5,5,0,3,5,8,6,10])
+        for v in [5,5,0,3,5,8,6,10]:
+            ht.put(v, v)
         self.assertTrue(3 in ht)
         ht.delete(3)
         self.assertFalse(3 in ht)
-        self.assertEquals([item for item in ht], [0,5,5,5,6,8,10])
+        self.assertEquals([item for item in ht], [0,5,6,8,10])
         
         self.assertTrue(5 in ht)
         ht.delete(5)
-        self.assertTrue(5 in ht)
-        ht.delete(5)
-        ht.delete(5)
-        self.assertFalse(5 in ht)
+        self.assertNotIn(5, ht)
         self.assertEquals([item for item in ht], [0,6,8,10])
 
         self.assertTrue(0 in ht)
@@ -191,17 +214,17 @@ class ArrayListTestCase(TestCase):
         self.assertEquals([item for item in ht], [6,8,10])
 
         self.assertTrue(8 in ht)
-        ht.delete(8)
+        del ht[8]
         self.assertFalse(8 in ht)
         self.assertEquals([item for item in ht], [6,10])
 
         self.assertTrue(6 in ht)
-        ht.delete(6)
+        del ht[6]
         self.assertFalse(6 in ht)
         self.assertEquals([item for item in ht], [10])
 
         self.assertTrue(10 in ht)
-        ht.delete(10)
+        del ht[10]
         self.assertFalse(10 in ht)
         self.assertEquals([item for item in ht], [])
         
@@ -209,14 +232,14 @@ class ArrayListTestCase(TestCase):
 
     def test14(self):
         ht = HashTable()
-        ht.add(1)
+        ht.put(1, 1)
         self.assertEquals(len(ht), 1)
         self.assertTrue(1 in ht)
         ht.delete(1)
         self.assertFalse(1 in ht)
 
-        ht.add(2)
-        ht.add(3)
+        ht.put(2, 2)
+        ht.put(3, 2)
         self.assertEquals(len(ht), 2)
    
     def test15(self):

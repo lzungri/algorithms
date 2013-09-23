@@ -30,6 +30,11 @@ def partition_first_as_pivot(elements, start, end):
     return current_pivot_index
 
 
+def partition_end_as_pivot(elements, start, end):
+    elements[start], elements[end - 1] = elements[end - 1], elements[start]
+    return partition_first_as_pivot(elements, start, end)
+
+
 def partition_random_as_pivot(elements, start, end):
     pivot_index = random.randrange(start, end)
     pivot_value = elements[pivot_index]
@@ -59,29 +64,25 @@ def inplace_sort(elements, start=None, end=None):
     end = len(elements) if end is None else end
     
     if end - start <= 1:
-        return elements, 0
+        return
     
-#     print str(elements).replace(" ", "")[1:]
     pivot = partition_first_as_pivot(elements, start, end)
+#     pivot = partition_end_as_pivot(elements, start, end)
 #     pivot = partition_random_as_pivot(elements, start, end)
     
-    print str(elements).replace(" ", "")[1:]
-    print "%ss" % ("  "*(start))
-    print "%s%d(%d)" % ("  "*(pivot), pivot, elements[pivot])
-    print "%se" % ("  "*(end))
 
-    _, comp1 = inplace_sort(elements, start, pivot)
-    _, comp2 = inplace_sort(elements, pivot + 1, end)
+    inplace_sort(elements, start, pivot)
+    inplace_sort(elements, pivot + 1, end)
 
-    return elements, end - start - 1 + comp1 + comp2
+    return
 
 
 
 def compare(orig, expected):
-    sorted_list, comparisons = inplace_sort(orig)
-    print "orig: %s, comp: %s" % (orig, comparisons)
-    if sorted_list != expected:
-        print "\tsorted: %s" % (sorted_list)
+    inplace_sort(orig)
+    print "orig: %s" % (orig)
+    if orig != expected:
+        print "\tsorted: %s" % (orig)
         print "\texpecd: %s" % (expected)
 
 # TODO: Create a test case

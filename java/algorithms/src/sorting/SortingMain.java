@@ -20,6 +20,7 @@ public class SortingMain {
 		print(sortInstance.sort(new Integer[]{}));
 		print(sortInstance.sort(new Integer[]{1,1}));
 		print(sortInstance.sort(new Integer[]{3,3,5,9,8,1,1}));
+		
 	}
 	
 	private static void print(Integer []elements) {
