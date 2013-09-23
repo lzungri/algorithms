@@ -16,6 +16,7 @@ Below is a (non-exhaustive) list of the things you will find:
   - [Binary tree](https://github.com/lzungri/algorithms/blob/master/python/data-structures/binary_tree.py)
   - [Sorted array list](https://github.com/lzungri/algorithms/blob/master/python/data-structures/sorted_arraylist.py)
   - [Sorted linked list](https://github.com/lzungri/algorithms/blob/master/python/data-structures/sorted_linkedlist.py)
+  - [Double linked list](https://github.com/lzungri/algorithms/blob/master/python/data-structures/linkedlist.py)
 
 #### Sorting algorithms ####
   - [Quick sort](https://github.com/lzungri/algorithms/blob/master/python/algorithms/sorting/quick_sort.py): It supports several pivot selection strategies
