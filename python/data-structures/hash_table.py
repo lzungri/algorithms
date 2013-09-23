@@ -40,6 +40,7 @@ class HashTable():
             bucket = Bucket()
             prev_bucket.next = bucket
         elif bucket.key == key:
+            bucket.value = value
             return False
 
         bucket.key = key
@@ -250,3 +251,11 @@ class HashTableTestCase(TestCase):
    
     def test17(self):
         self.__assert_contains(range(7005), max_buckets=1000)
+        
+    def test18(self):
+        ht = HashTable()
+        ht["Hello"] = 1
+        ht["Hello"] = 2
+        self.assertIn("Hello", ht)
+        self.assertEquals(ht["Hello"], 2)
+        self.assertEquals(len(ht), 1)
