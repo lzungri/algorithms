@@ -9,9 +9,35 @@
 # |1,3,5,9|0,2,7,8|
 # |0,1,2,3,5,7,8,9|
 
-def inplace_sort(elements):
-    return merge_sort(elements)
+def sort(array):
+    aux_array = [None]*len(array)
+    return mergesort2(array, aux_array, 0, len(array))
 
+def mergesort2(array, aux_array, low, high):
+    if high - low <= 1:
+        return
+    
+    middle = (low + high) / 2
+    mergesort2(array, aux_array, low, middle)
+    mergesort2(array, aux_array, middle, high)
+
+    for i in range(low, high):
+        aux_array[i] = array[i]
+    
+    left = low
+    right = middle
+    current = low
+    
+    for current in range(low, high):
+        if left >= middle or (right < high and aux_array[right] < aux_array[left]):
+            array[current] = aux_array[right]
+            right += 1
+        else:
+            array[current] = aux_array[left]
+            left += 1
+
+
+# Space complexity = O(n logn)
 def merge_sort(elements):
     if len(elements) <= 1:
         return elements
@@ -33,10 +59,17 @@ def merge_sort(elements):
     return merged
 
 def compare(orig, expected):
-    sorted_list = inplace_sort(orig)
+    print "mergesort"
+    sorted_list = merge_sort(orig)
     if sorted_list != expected:
         print "orig: %s" % orig
         print "\tsorted: %s" % (sorted_list)
+        print "\texpecd: %s" % (expected)
+
+    print "mergesort2"
+    sort(orig)
+    if orig != expected:
+        print "\tsorted: %s" % (orig)
         print "\texpecd: %s" % (expected)
 
 # TODO: Create a test case
