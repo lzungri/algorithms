@@ -53,20 +53,24 @@ class ArrayList():
         found, final_offset = self.__search_value(value)
         return final_offset if found else -1
     
-    def __search_value(self, value, array=None, final_offset=0):
-        array = self.__array if array is None else array
-        if not array:
-            return False, final_offset
+    def __search_value(self, value, start=None, end=None):
+        if start is None:
+            start = 0
+        if end is None:
+            end = len(self)
+            
+        if end - start <= 0:
+            return False, start
 
-        middle = len(array) >> 1
-        middle_value = array[middle]
+        middle = (start + end) / 2
+        middle_value = self.__array[middle]
 
         if middle_value == value:
-            return True, final_offset + middle
+            return True, middle
 
         if middle_value > value:
-            return self.__search_value(value, array[:middle], final_offset)
-        return self.__search_value(value, array[middle+1:], final_offset + middle + 1)
+            return self.__search_value(value, start, middle)
+        return self.__search_value(value, middle + 1, end)
     
     def is_empty(self):
         return len(self) <= 0
