@@ -14,9 +14,6 @@ class Field():
         return "%s (store: %s)" % (self.__class__.__name__, self.store)
     
 class NumericField(Field):
-    def __init__(self, store=False):
-        Field.__init__(self, store)
-        
     def tokenize(self, value):
         return [value]
 
