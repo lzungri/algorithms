@@ -1,3 +1,6 @@
+import random
+from unittest import TestCase
+
 # Input: array of n elements
 # Output: the same array of n elements sorted
 # Example:
@@ -9,8 +12,6 @@
 # [3,1,5,2,i9,j7,8]
 # [3,1,5,2,i9,7,j8]
 # [3,1,2,5,i9,7,8]
-
-import random
 
 
 def partition_first_as_pivot(elements, start, end):
@@ -69,7 +70,6 @@ def inplace_sort(elements, start=None, end=None):
     pivot = partition_first_as_pivot(elements, start, end)
 #     pivot = partition_end_as_pivot(elements, start, end)
 #     pivot = partition_random_as_pivot(elements, start, end)
-    
 
     inplace_sort(elements, start, pivot)
     inplace_sort(elements, pivot + 1, end)
@@ -78,24 +78,21 @@ def inplace_sort(elements, start=None, end=None):
 
 
 
-def compare(orig, expected):
-    inplace_sort(orig)
-    print "orig: %s" % (orig)
-    if orig != expected:
-        print "\tsorted: %s" % (orig)
-        print "\texpecd: %s" % (expected)
+class QuickSortTestCase(TestCase):
+    def __assert_compare(self, original, expected):
+        inplace_sort(original)
+        self.assertEqual(original, expected)
 
-# TODO: Create a test case
-
-compare([3,1,5,9,2,7,8,0], [0,1,2,3,5,7,8,9])
-compare([3,1,5,4,7,9,8,0], [0,1,3,4,5,7,8,9])
-compare([3,1,5,4,7,9,8,1,0], [0,1,1,3,4,5,7,8,9])
-compare([3,1], [1,3])
-compare([3,1,2], [1,2,3])
-compare([], [])
-compare([1], [1])
-compare([1,1], [1,1])
-compare([1,1,1,3,0], [0,1,1,1,3])
-compare([0,3,1,1,5,4,1,7,9,8], [0,1,1,1,3,4,5,7,8,9])
-compare([3,3,5,9,8,1,1], [1,1,3,3,5,8,9])
-compare([1,0,3,4,2,7], [0,1,2,3,4,7])
+    def test(self):
+        self.__assert_compare([3,1,5,9,2,7,8,0], [0,1,2,3,5,7,8,9])
+        self.__assert_compare([3,1,5,4,7,9,8,0], [0,1,3,4,5,7,8,9])
+        self.__assert_compare([3,1,5,4,7,9,8,1,0], [0,1,1,3,4,5,7,8,9])
+        self.__assert_compare([3,1], [1,3])
+        self.__assert_compare([3,1,2], [1,2,3])
+        self.__assert_compare([], [])
+        self.__assert_compare([1], [1])
+        self.__assert_compare([1,1], [1,1])
+        self.__assert_compare([1,1,1,3,0], [0,1,1,1,3])
+        self.__assert_compare([0,3,1,1,5,4,1,7,9,8], [0,1,1,1,3,4,5,7,8,9])
+        self.__assert_compare([3,3,5,9,8,1,1], [1,1,3,3,5,8,9])
+        self.__assert_compare([1,0,3,4,2,7], [0,1,2,3,4,7])

@@ -1,3 +1,4 @@
+import unittest
 from common import create_graph
 
 
@@ -22,7 +23,6 @@ def topological_sort(graph):
     return map(values.get, sorted(values.keys()))
 
 
-import unittest
 
 class TopologicalSort(unittest.TestCase):
 

@@ -1,3 +1,5 @@
+from unittest import TestCase
+
 # Input: array of n elements
 # Output: the same array of n elements sorted
 # Example:
@@ -58,30 +60,23 @@ def merge_sort(elements):
         
     return merged
 
-def compare(orig, expected):
-    print "mergesort"
-    sorted_list = merge_sort(orig)
-    if sorted_list != expected:
-        print "orig: %s" % orig
-        print "\tsorted: %s" % (sorted_list)
-        print "\texpecd: %s" % (expected)
 
-    print "mergesort2"
-    sort(orig)
-    if orig != expected:
-        print "\tsorted: %s" % (orig)
-        print "\texpecd: %s" % (expected)
-
-# TODO: Create a test case
-
-compare([3,1,5,9,2,7,8,0], [0,1,2,3,5,7,8,9])
-compare([3,1,5,4,7,9,8,0], [0,1,3,4,5,7,8,9])
-compare([3,1,5,4,7,9,8,1,0], [0,1,1,3,4,5,7,8,9])
-compare([3,1], [1,3])
-compare([3,1,2], [1,2,3])
-compare([], [])
-compare([1], [1])
-compare([1,1], [1,1])
-compare([0,3,1,1,5,4,1,7,9,8], [0,1,1,1,3,4,5,7,8,9])
-compare([3,3,5,9,8,1,1], [1,1,3,3,5,8,9])
-compare([1,0,3,4,2,7], [0,1,2,3,4,7])
+class MergeSortTestCase(TestCase):
+    def __assert_compare(self, elements, expected):
+        self.assertEqual(merge_sort(elements), expected)
+        
+        sort(elements)
+        self.assertEqual(elements, expected)
+    
+    def test(self):
+        self.__assert_compare([3,1,5,9,2,7,8,0], [0,1,2,3,5,7,8,9])
+        self.__assert_compare([3,1,5,4,7,9,8,0], [0,1,3,4,5,7,8,9])
+        self.__assert_compare([3,1,5,4,7,9,8,1,0], [0,1,1,3,4,5,7,8,9])
+        self.__assert_compare([3,1], [1,3])
+        self.__assert_compare([3,1,2], [1,2,3])
+        self.__assert_compare([], [])
+        self.__assert_compare([1], [1])
+        self.__assert_compare([1,1], [1,1])
+        self.__assert_compare([0,3,1,1,5,4,1,7,9,8], [0,1,1,1,3,4,5,7,8,9])
+        self.__assert_compare([3,3,5,9,8,1,1], [1,1,3,3,5,8,9])
+        self.__assert_compare([1,0,3,4,2,7], [0,1,2,3,4,7])

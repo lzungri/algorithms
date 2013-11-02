@@ -1,3 +1,4 @@
+from unittest import TestCase
 # Input: array of n elements
 # Output: the same array of n elements sorted
 # Example:
@@ -24,12 +25,13 @@ def inplace_sort(elements):
             return elements
     return elements
 
-# TODO: Create a test case
 
-print inplace_sort([3,1,5,9,2,7,8])
-print inplace_sort([3,1,5,4,7,9,8])
-print inplace_sort([3,1])
-print inplace_sort([])
-print inplace_sort([3])
-print inplace_sort([0,3,1,1,5,4,1,7,9,8])
-print inplace_sort([3,3,5,9,8,1,1])
+class BubbleSortTestCase(TestCase):
+    def test1(self):
+        self.assertEquals(inplace_sort([3,1,5,9,2,7,8])      , [1, 2, 3, 5, 7, 8, 9])
+        self.assertEquals(inplace_sort([3,1,5,4,7,9,8])      , [1, 3, 4, 5, 7, 8, 9])
+        self.assertEquals(inplace_sort([3,1])                , [1, 3])
+        self.assertEquals(inplace_sort([])                   , [])
+        self.assertEquals(inplace_sort([3])                  , [3])
+        self.assertEquals(inplace_sort([0,3,1,1,5,4,1,7,9,8]), [0, 1, 1, 1, 3, 4, 5, 7, 8, 9])
+        self.assertEquals(inplace_sort([3,3,5,9,8,1,1])      , [1, 1, 3, 3, 5, 8, 9])
