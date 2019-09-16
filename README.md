@@ -5,7 +5,7 @@ In this repository you can find experimental implementations of well-known algor
 
 Below is a (non-exhaustive) list of the things you will find:
 
-## **Python**##
+## **Python** ##
  
 #### Data structures ####
   - [Inverted index](https://github.com/lzungri/algorithms/blob/master/python/data-structures/inverted_index.py): Pretty basic but nice (deletion not supported).
